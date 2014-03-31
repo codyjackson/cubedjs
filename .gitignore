@@ -19,6 +19,7 @@
 /rdoc
 /wiki
 /packaging
+/assets/javascripts/vendor
 npm-debug.log
 *.tmproj
 azure_error
@@ -52,3 +53,4 @@ what
 .tmproj
 nbproject
 Thumbs.db
+mimosa-config-documented.coffee
