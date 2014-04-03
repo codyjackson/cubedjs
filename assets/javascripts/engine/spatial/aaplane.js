@@ -1,16 +1,16 @@
 define(function(){
-	function Plane(span, constant) {
+	function AAPlane(span, constant) {
 		this.span = span;
 		this.constant = constant;
 	}
 
-	Plane.Span = {
+	AAPlane.Span = {
 		XY: 'XY',
 		XZ: 'XZ',
 		YZ: 'YZ'
 	};
 
-	Plane.prototype.findIntersection = function(ray) {
+	AAPlane.prototype.findIntersection = function(ray) {
 		if(this.span === Span.XY)
 			return findIntersectionForComponents(ray.origin.z, ray.direction.z);
 		if(this.span === Span.XZ)
@@ -27,5 +27,5 @@ define(function(){
 		return scalar < 0 ? false : new Intersection(scalar, this);
 	}
 
-	return Plane;
+	return AAPlane;
 });

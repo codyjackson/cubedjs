@@ -1,10 +1,10 @@
 define([], function(){
-	function Voxel(topLeftFront, sideLength) {
+	function AAVoxel(topLeftFront, sideLength) {
 		this.topLeftFront = topLeftFront;
 		this.sideLength = sideLength;
 	}
 
-	Voxel.Face = {
+	AAVoxel.Face = {
 		TOP: 'TOP',
 		BOTTOM: 'BOTTOM',
 		FRONT: 'FRONT',
@@ -13,15 +13,15 @@ define([], function(){
 		RIGHT: 'RIGHT'
 	}
 
-	Voxel.prototype.isInside = function (ray) {
+	AAVoxel.prototype.isInside = function (ray) {
 
 	};
 
-	Voxel.prototype.findIntersection = function (ray) {
+	AAVoxel.prototype.findIntersection = function (ray) {
 
 	};
 
-	Voxel.prototype.generateMesh = function (color, isFrontVisible, isBackVisible, isTopVisible, isBottomVisible, isLeftVisible, isRightVisible) {
+	AAVoxel.prototype.generateMesh = function (color, isFrontVisible, isBackVisible, isTopVisible, isBottomVisible, isLeftVisible, isRightVisible) {
 
 	};
 
@@ -51,5 +51,5 @@ define([], function(){
 
 
 
-	return Voxel;
+	return AAVoxel;
 });
