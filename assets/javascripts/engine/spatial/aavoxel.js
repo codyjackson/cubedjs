@@ -1,8 +1,9 @@
 define(['engine/spatial/aaplane', 
 		'engine/utility/numerical', 
-		'engine/utility/geometry'
+		'engine/utility/geometry',
+		'engine/constants'
 		'three'], 
-function(AAPlane, Numerical, Geometry, THREE){
+function(AAPlane, Numerical, Geometry, Constants, THREE){
 	function AAVoxel(topLeftFront, sideLength) {
 		this.topLeftFront = topLeftFront;
 		this.sideLength = sideLength;
