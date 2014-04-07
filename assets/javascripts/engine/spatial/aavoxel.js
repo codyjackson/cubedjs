@@ -1,7 +1,7 @@
 define(['engine/spatial/aaplane', 
 		'engine/utility/numerical', 
 		'engine/utility/geometry',
-		'engine/constants'
+		'engine/constants',
 		'three'], 
 function(AAPlane, Numerical, Geometry, Constants, THREE){
 	function AAVoxel(topLeftFront, sideLength) {
@@ -30,12 +30,17 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 
 	AAVoxel.prototype.findIntersection = function (ray) {
 		var dir = ray.direction;
-		var intersection;
-		if(intersection = getSideIntersection(dir.x < 0 ? new Face(Side.RIGHT, right()) : new Face(Side.LEFT, left())))
+
+		var intersection = getSideIntersection(dir.x < 0 ? new Face(Side.RIGHT, right()) : new Face(Side.LEFT, left()));
+		if(intersection) 
 			return intersection;
-		if(intersection = getSideIntersection(dir.y < 0 ? new Face(Side.TOP, top()) : new Face(Side.BOTTOM, bottom())))
+
+		intersection = getSideIntersection(dir.y < 0 ? new Face(Side.TOP, top()) : new Face(Side.BOTTOM, bottom()));
+		if(intersection) 
 			return intersection;
-		if(intersection = getSideIntersection(dir.z < 0 ? new Face(Side.FRONT, front()) : new Face(Side.BACK, back())))
+
+		intersection = getSideIntersection(dir.z < 0 ? new Face(Side.FRONT, front()) : new Face(Side.BACK, back()));
+		if(intersection) 
 			return intersection;
 
 		return false;
@@ -60,7 +65,11 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 
 	function Quad(color, verts) {
 		var g = new THREE.Geometry();
-		g.vertices = 
+		g.vertices = verts;
+		g.faces = [
+			new THREE.Face3(0, 1, 3, null, new THREE.Color(0xFFFF00)),
+			new THREE.Face3(3, 1, 2, null, new THREE.Color(0xFFFF00))
+		];
 	}
 
 	function generateXYQuad(color, translation, side) {
@@ -95,27 +104,27 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 
 	AAVoxel.prototype.left = function() {
 		return topLeftFront.x;
-	}
+	};
 
 	AAVoxel.prototype.right = function() {
 		return topLeftFront.x + sideLength;
-	}
+	};
 
 	AAVoxel.prototype.top = function() {
 		return topLeftFront.y;
-	}
+	};
 
 	AAVoxel.prototype.bottom = function() {
 		return topLeftFront.y - sideLength;
-	}
+	};
 
 	AAVoxel.prototype.front = function() {
 		return topLeftFront.z;
-	}
+	};
 
 	AAVoxel.prototype.back = function() {
 		return topLeftFront.z - sideLength;
-	}
+	};
 
 	AAVoxel.prototype._getSpan = function(side) {
 		if(Side === AAVoxel.Side.LEFT || Side === AAVoxel.Side.RIGHT)
@@ -126,7 +135,7 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 			return AAPlane.Span.XY;
 
 		throw "Invalid 'side' specified.";
-	}
+	};
 
 	AAVoxel.prototype._getSideIntersection = function(face, ray) {
 		var span = getSpan(face.side);
@@ -134,7 +143,7 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 		var planeIntersection = plane.findIntersection(ray);
 		var pointOfIntersection = ray.at(planeIntersection.distance);
 		return _isOnFace(pointOfIntersection, span) ? new VoxelIntersection(this, face.side, planeIntersection.distance) : false;
-	}
+	};
 
 	AAVoxel.prototype._isOnFace = function(point, span) {
 		if(span === AAPlane.Span.YZ)
@@ -145,7 +154,7 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 			return Numerical.isBetween(point.x, left(), right()) && Numerical.isBetween(point.y, top(), bottom());
 
 		throw "Invalid 'span' specified.";
-	}
+	};
 
 	function Face(side, constant) {
 		this.side = side;
