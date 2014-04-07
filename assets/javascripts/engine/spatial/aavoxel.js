@@ -6,7 +6,7 @@ define(['engine/spatial/aaplane',
 function(AAPlane, Numerical, Geometry, Constants, THREE){
 	function AAVoxel(topLeftFront, sideLength) {
 		this.topLeftFront = topLeftFront;
-		this.sideLength = sideLength;
+		this.sideLength = AAVoxel.Side.ength;
 	}
 
 	AAVoxel.Side = {
@@ -49,18 +49,20 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 	AAVoxel.prototype.generateGeometry = function (color, isFrontVisible, isBackVisible, isTopVisible, isBottomVisible, isLeftVisible, isRightVisible) {
 		var geometry = new THREE.Geometry();
 		if(isFrontVisible)
-			Geometry.append(geometry, generateXYQuad(color, topLeftFront, Side.FRONT));
+			Geometry.append(geometry, generateXYQuad(color, this.topLeftFront, AAVoxel.Side.FRONT));
 		if(isTopVisible)
-			Geometry.append(geometry, generateXZQuad(color, topLeftFront, Side.TOP));
+			Geometry.append(geometry, generateXZQuad(color, this.topLeftFront, AAVoxel.Side.TOP));
 		if(isLeftVisible)
-			Geometry.append(geometry, generateYZQuad(color, topLeftFront, Side.LEFT));
+			Geometry.append(geometry, generateYZQuad(color, this.topLeftFront, AAVoxel.Side.LEFT));
 
 		if(isBackVisible)
-			Geometry.append(geometry, generateXYQuad(color, topLeftFront.add(Constants.Vec3.forward.multiplyScalar(sideLength)), Side.BACK));
+			Geometry.append(geometry, generateXYQuad(color, topLeftFront.add(Constants.Vec3.forward.multiplyScalar(sideLength)), AAVoxel.Side.BACK));
 		if(isBottomVisible)
-			Geometry.append(geometry, generateXZQuad(color, topLeftFront.add(Constants.Vec3.down.multiplyScalar(sideLength)), Side.BOTTOM));
+			Geometry.append(geometry, generateXZQuad(color, topLeftFront.add(Constants.Vec3.down.multiplyScalar(sideLength)), AAVoxel.Side.BOTTOM));
 		if(isRightVisible)
-			Geometry.append(geometry, generateYZQuad(color, topLeftFront.add(Constants.Vec3.right.multiplyScalar(sideLength)), Side.RIGHT));
+			Geometry.append(geometry, generateYZQuad(color, topLeftFront.add(Constants.Vec3.right.multiplyScalar(sideLength)), AAVoxel.Side.RIGHT));
+
+		return geometry;
 	};
 
 	function Quad(color, verts) {
@@ -70,6 +72,8 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 			new THREE.Face3(0, 1, 3, null, new THREE.Color(0xFFFF00)),
 			new THREE.Face3(3, 1, 2, null, new THREE.Color(0xFFFF00))
 		];
+
+		return g;
 	}
 
 	function generateXYQuad(color, translation, side) {
@@ -78,7 +82,7 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 		var bottomRight = topRight.add(Constants.Vec3.down);
 		var bottomLeft = bottomRight.add(Constants.Vec3.left);
 
-		var verts = side === Side.FRONT ? [topLeft, topRight, bottomRight, bottomLeft] : [topLeft, bottomLeft, bottomRight, topRight];
+		var verts = side === AAVoxel.Side.FRONT ? [topLeft, topRight, bottomRight, bottomLeft] : [topLeft, bottomLeft, bottomRight, topRight];
 		return Quad(color, verts);
 	}
 
@@ -88,7 +92,7 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 		var backBottom = frontBottom.add(Constants.Vec3.forward);
 		var backTop = backBottom.add(Constants.Vec3.up);
 
-		var verts = side === Side.LEFT ? [frontTop, frontBottom, backBottom, backTop] : [frontTop, backTop, backBottom, frontBottom];
+		var verts = side === AAVoxel.Side.LEFT ? [frontTop, frontBottom, backBottom, backTop] : [frontTop, backTop, backBottom, frontBottom];
 		return Quad(color, verts);
 	}
 
@@ -98,7 +102,7 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 		var backRight = frontRight.add(Constants.Vec3.forward);
 		var backLeft = backRight.add(Constants.Vec3.left);
 
-		var verts = side === Side.BOTTOM ? [frontLeft, frontRight, backRight, backLeft] : [frontLeft, backLeft, backRight, frontRight];
+		var verts = side === AAVoxel.Side.BOTTOM ? [frontLeft, frontRight, backRight, backLeft] : [frontLeft, backLeft, backRight, frontRight];
 		return Quad(color, verts);
 	}
 
@@ -107,7 +111,7 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 	};
 
 	AAVoxel.prototype.right = function() {
-		return topLeftFront.x + sideLength;
+		return topLeftFront.x + AAVoxel.Side.ength;
 	};
 
 	AAVoxel.prototype.top = function() {
@@ -115,7 +119,7 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 	};
 
 	AAVoxel.prototype.bottom = function() {
-		return topLeftFront.y - sideLength;
+		return topLeftFront.y - AAVoxel.Side.ength;
 	};
 
 	AAVoxel.prototype.front = function() {
@@ -123,15 +127,15 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 	};
 
 	AAVoxel.prototype.back = function() {
-		return topLeftFront.z - sideLength;
+		return topLeftFront.z - AAVoxel.Side.ength;
 	};
 
 	AAVoxel.prototype._getSpan = function(side) {
-		if(Side === AAVoxel.Side.LEFT || Side === AAVoxel.Side.RIGHT)
+		if(side === AAVoxel.Side.LEFT || side === AAVoxel.Side.RIGHT)
 			return AAPlane.Span.YZ;
-		if(Side === AAVoxel.Side.TOP || Side === AAVoxel.Side.BOTTOM)
+		if(side === AAVoxel.Side.TOP || side === AAVoxel.Side.BOTTOM)
 			return AAPlane.Span.XZ;
-		if(Side === AAVoxel.Side.FRONT || Side === AAVoxel.Side.BACK)
+		if(side === AAVoxel.Side.FRONT || side === AAVoxel.Side.BACK)
 			return AAPlane.Span.XY;
 
 		throw "Invalid 'side' specified.";
@@ -157,11 +161,11 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 	};
 
 	function Face(side, constant) {
-		this.side = side;
+		this.side = AAVoxel.Side.
 		this.constant = constant;
 	}
 
-	function VoxelIntersection(voxel, side, distance) {
+	function VoxelIntersection(voxel, side) {
 		this.voxel = voxel;
 		this.side = side;
 		this.distance = distance;
