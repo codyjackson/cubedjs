@@ -19,12 +19,19 @@ define(function(){
 	};
 
 	function findIntersectionForComponents(originComponent, directionComponent) {
+		if(directionComponent === 0)
+			return false;
+
 		if(this.constant === originComponent)
 			return new Intersection(0, this);
-		if(this.constant === directionComponent)
-			return false;
+
 		var scalar = (this.constant - originComponent) / directionComponent;
-		return scalar < 0 ? false : new Intersection(scalar, this);
+		return scalar < 0 ? false : new PlaneIntersection(this, scalar);
+	}
+
+	function PlaneIntersection(plane, distance) {
+		this.plane = plane;
+		this.distance = distance;
 	}
 
 	return AAPlane;
