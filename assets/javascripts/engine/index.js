@@ -17,7 +17,7 @@ define(['three', 'engine/spatial/aavoxel'], function(THREE, AAVoxel) {
 		geo.vertices = [
 			new THREE.Vector3(0, 0, 1),
 			new THREE.Vector3(1, 0, 1),
-			new THREE.Vector3(1, 1, 1)
+			new THREE.Vector3(0, 1, 1)
 		];
 		console.log(geo.vertices);
 		geo.faces.push(new THREE.Face3(0, 1, 2, null, new THREE.Color(0xFFFF00)));

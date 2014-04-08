@@ -78,11 +78,11 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 
 	function generateXYQuad(color, translation, side) {
 		var topLeft = translation;
-		var topRight = topLeft.add(Constants.Vec3.right);
-		var bottomRight = topRight.add(Constants.Vec3.down);
-		var bottomLeft = bottomRight.add(Constants.Vec3.left);
+		var topRight = (new THREE.Vector3()).addVectors(topLeft, Constants.Vec3.right);
+		var bottomRight = (new THREE.Vector3()).addVectors(topRight, Constants.Vec3.down);
+		var bottomLeft = (new THREE.Vector3()).addVectors(bottomRight, Constants.Vec3.left);
 
-		var verts = side === AAVoxel.Side.FRONT ? [topLeft, topRight, bottomRight, bottomLeft] : [topLeft, bottomLeft, bottomRight, topRight];
+		var verts = side === AAVoxel.Side.BACK ? [topLeft, topRight, bottomRight, bottomLeft] : [topLeft, bottomLeft, bottomRight, topRight];
 		return Quad(color, verts);
 	}
 
