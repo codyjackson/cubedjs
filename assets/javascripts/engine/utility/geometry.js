@@ -19,13 +19,17 @@ define([], function(){
 			var verts = sorted.l.vertices.concat(sorted.s.vertices);
 
 			var offset = sorted.l.vertices.length;
-			var offsetFaces = sorted.s.faces.map(function(e){return e + offset;});
-			var faces = sorted.l.faces.concat(offsetFaces);
+			sorted.s.faces.forEach(function(face){
+				face.a += offset;
+				face.b += offset;
+				face.c += offset;
+			});
+			var faces = sorted.l.faces.concat(sorted.s.faces);
 
 			target.vertices = verts;
 			target.faces = faces;
 
 			return target;
 		}
-	}
+	};
 });
