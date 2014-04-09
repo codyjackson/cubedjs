@@ -6,7 +6,7 @@ define(['engine/spatial/aaplane',
 function(AAPlane, Numerical, Geometry, Constants, THREE){
 	function AAVoxel(topLeftFront, sideLength) {
 		this.topLeftFront = topLeftFront;
-		this.sideLength = AAVoxel.Side.ength;
+		this.sideLength = sideLength;
 	}
 
 	AAVoxel.Side = {
@@ -55,12 +55,24 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 		if(isLeftVisible)
 			Geometry.append(geometry, generateYZQuad(color, this.topLeftFront, AAVoxel.Side.LEFT));
 
-		if(isBackVisible)
-			Geometry.append(geometry, generateXYQuad(color, topLeftFront.add(Constants.Vec3.forward.multiplyScalar(sideLength)), AAVoxel.Side.BACK));
-		if(isBottomVisible)
-			Geometry.append(geometry, generateXZQuad(color, topLeftFront.add(Constants.Vec3.down.multiplyScalar(sideLength)), AAVoxel.Side.BOTTOM));
-		if(isRightVisible)
-			Geometry.append(geometry, generateYZQuad(color, topLeftFront.add(Constants.Vec3.right.multiplyScalar(sideLength)), AAVoxel.Side.RIGHT));
+		function translate(topLeftFront, sideLength, direction) {
+			return (new THREE.Vector3()).addVectors(topLeftFront, direction.clone().multiplyScalar(sideLength));
+		}
+
+		if(isBackVisible) {
+			var translation = translate(this.topLeftFront, this.sideLength, Constants.Vec3.forward);
+			Geometry.append(geometry, generateXYQuad(color, translation, AAVoxel.Side.BACK));
+		}
+
+		if(isBottomVisible) {
+			var translation = translate(this.topLeftFront, this.sideLength, Constants.Vec3.down);
+			Geometry.append(geometry, generateXZQuad(color, translation, AAVoxel.Side.BOTTOM));
+		}
+
+		if(isRightVisible) {
+			var translation = translate(this.topLeftFront, this.sideLength, Constants.Vec3.right);
+			Geometry.append(geometry, generateYZQuad(color, translation, AAVoxel.Side.RIGHT));
+		}
 
 		return geometry;
 	};
@@ -88,21 +100,21 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 
 	function generateYZQuad(color, translation, side) {
 		var frontTop = translation;
-		var frontBottom = frontTop.add(Constants.Vec3.down);
-		var backBottom = frontBottom.add(Constants.Vec3.forward);
-		var backTop = backBottom.add(Constants.Vec3.up);
+		var frontBottom = (new THREE.Vector3()).addVectors(frontTop, Constants.Vec3.down);
+		var backBottom = (new THREE.Vector3()).addVectors(frontBottom, Constants.Vec3.forward);
+		var backTop = (new THREE.Vector3()).addVectors(backBottom, Constants.Vec3.up);
 
-		var verts = side === AAVoxel.Side.LEFT ? [frontTop, frontBottom, backBottom, backTop] : [frontTop, backTop, backBottom, frontBottom];
+		var verts = side === AAVoxel.Side.RIGHT ? [frontTop, frontBottom, backBottom, backTop] : [frontTop, backTop, backBottom, frontBottom];
 		return Quad(color, verts);
 	}
 
 	function generateXZQuad(color, translation, side) {
 		var frontLeft = translation;
-		var frontRight = frontLeft.add(Constants.Vec3.right);
-		var backRight = frontRight.add(Constants.Vec3.forward);
-		var backLeft = backRight.add(Constants.Vec3.left);
+		var frontRight = (new THREE.Vector3()).addVectors(frontLeft, Constants.Vec3.right);
+		var backRight = (new THREE.Vector3()).addVectors(frontRight, Constants.Vec3.forward);
+		var backLeft = (new THREE.Vector3()).addVectors(backRight, Constants.Vec3.left);
 
-		var verts = side === AAVoxel.Side.BOTTOM ? [frontLeft, frontRight, backRight, backLeft] : [frontLeft, backLeft, backRight, frontRight];
+		var verts = side === AAVoxel.Side.TOP ? [frontLeft, frontRight, backRight, backLeft] : [frontLeft, backLeft, backRight, frontRight];
 		return Quad(color, verts);
 	}
 
