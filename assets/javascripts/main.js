@@ -10,5 +10,6 @@ require.config({
 });
 
 require(['engine/index'], function(engine){
-	engine();
+	console.log(engine.Input);
+	engine.run();
 });
