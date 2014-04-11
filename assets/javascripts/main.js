@@ -9,7 +9,12 @@ require.config({
 	}
 });
 
-require(['engine/index'], function(engine){
+require(['engine/index', 
+		 'engine/input',
+		 'engine/utility/browser'], 
+function(engine, input, browser){
 	console.log(engine.Input);
+	browser.makeFullScreen();
+	input.Mouse.lockMovement();
 	engine.run();
 });

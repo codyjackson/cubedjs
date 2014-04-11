@@ -1,4 +1,4 @@
-define([], function(){
+define(['engine/utility/browser'], function(browser){
 	var Pressable = {
 		SPACE: 32,
 		APOSTROPHE: 39,
@@ -148,12 +148,49 @@ define([], function(){
 		console.log(e);
 	}
 
-	document.body.addEventListener('keydown', onKeyDown, false);
+	function createMouse() {
+		var positon;
+		var oldPosition
+
+		var requestPointerLock = browser.getFunctionAttachedToElement(document.documentElement, 'requestPointerLock');
+
+		return new (function Mouse() {
+			this.hideCursor = function hideCursor() {
+			};
+
+			this.showCursor = function showCursor() {
+			};
+
+			this.isMouseHidden = function isMouseHidden() {
+			};
+
+			this.lockMovement = requestPointerLock;
+			
+			this.unlockMovement = function unlockMovement() {
+			};
+
+			this.isMovementLocked = function isMovementLocked() {
+			};
+
+			this.getPosition = function getPosition() {
+			};
+
+			this.getPositionDelta = function getPositionDelta() {
+			};
+
+			this.getWheelDelta = function getWheelDelta() {
+			};
+		});
+	}
+
+	var body = document.body;
+	body.addEventListener('keydown', onKeyDown, false);
 
 	return {
 		Pressable: Pressable,
 		PressableEvent: PressableEvent,
 		PressableTerminal: PressableTerminal,
-		MoveableTerminal: MoveableTerminal
+		MoveableTerminal: MoveableTerminal,
+		Mouse: createMouse()
 	};
 });
