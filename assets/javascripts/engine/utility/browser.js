@@ -25,9 +25,11 @@ define([], function(){
 	}
 
 	var makeFullScreen = getFunctionAttachedToElement(document.documentElement, 'requestFullScreen');
+	var lockMouse = getFunctionAttachedToElement(document.documentElement, 'requestPointerLock');
 
 	return {
 		getFunctionAttachedToElement: getFunctionAttachedToElement,
-		makeFullScreen: makeFullScreen
+		makeFullScreen: makeFullScreen,
+		lockMouse: lockMouse
 	}
 });
