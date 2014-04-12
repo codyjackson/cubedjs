@@ -1,5 +1,6 @@
-define(function(require){
+define(['engine/spatial/aaplane', 'engine/spatial/aavoxel'], function(AAPlane, AAVoxel){
 	return {
-		AAPlane: require('engine/spatial/aaplane')
+		AAPlane: AAPlane,
+		AAVoxel: AAVoxel
 	};
 });
