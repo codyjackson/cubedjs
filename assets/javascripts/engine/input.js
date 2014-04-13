@@ -134,6 +134,10 @@ define(['engine/utility/browser'], function(browser){
 		RELEASED: 'RELEASED'
 	};
 
+	function keyify(items) {
+		items.join('');
+	}
+
 	function PressableTerminal(pressable, pressableEvent) {
 		this.pressable = pressable;
 		this.pressableEvent = pressableEvent;
@@ -150,11 +154,11 @@ define(['engine/utility/browser'], function(browser){
 
 	function createMouse() {
 		var positon;
-		var oldPosition
+		var oldPosition;
 
 		var requestPointerLock = browser.getFunctionAttachedToElement(document.documentElement, 'requestPointerLock');
 
-		return new (function Mouse() {
+		function Mouse() {
 			this.hideCursor = function hideCursor() {
 			};
 
@@ -180,11 +184,63 @@ define(['engine/utility/browser'], function(browser){
 
 			this.getWheelDelta = function getWheelDelta() {
 			};
-		});
+		}
+
+		return new Mouse();
+	}
+
+	function Combo(inputs) {
+		inputs = inputs.slice();
+		this.terminal = inputs.pop();
+		this.modifiers = inputs;
+	}
+
+	Combo.prototype.keyify = function() {
+		return keyify(this.modifiers.concat(this.terminal));
 	}
 
 	var body = document.body;
 	body.addEventListener('keydown', onKeyDown, false);
+
+	var terminalToCombo = {};
+	var comboToCallback = {};
+	var pressableToKeyState = {};
+
+	function prepareForUpdates() {
+
+	}
+
+	function update(pressable, state) {
+
+	}
+
+	function updateMouseLockedPosition(lockedPosition, movedPosition) {
+
+	}
+
+	function updateMouseScrollWheel(clicks) {
+
+	}
+
+	function invokeBoundCallback(combo) {
+
+	}
+
+	function signalPressable(terminal) {
+
+	}
+
+	function signalMoveable(terminal) {
+
+	}
+
+	function isPressablePressed(pressable) {
+
+	}
+
+	function areModifiersPressed(modifiers) {
+
+	}
 
 	return {
 		Pressable: Pressable,
