@@ -56,10 +56,10 @@ define(['engine/utility/browser'], function(browser){
 		BACKSPACE: 259,
 		INSERT: 260,
 		DELETE: 261,
-		RIGHT: 262,
-		LEFT: 263,
-		DOWN: 264,
-		UP: 265,
+		RIGHT: 39,
+		LEFT: 37,
+		DOWN: 40,
+		UP: 38,
 		PAGE_UP: 266,
 		PAGE_DOWN: 267,
 		HOME: 268,
@@ -134,23 +134,28 @@ define(['engine/utility/browser'], function(browser){
 		RELEASED: 'RELEASED'
 	};
 
-	function keyify(items) {
-		items.join('');
+	var PressableState = {
+		UP: 'UP',
+		DOWN: 'DOWN'
 	}
 
-	function PressableTerminal(pressable, pressableEvent) {
+	function keyify(items) {
+		return items.join('');
+	}
+
+	function PressableTerminal(pressable, event) {
 		this.pressable = pressable;
-		this.pressableEvent = pressableEvent;
+		this.event = event;
+	}
+
+	PressableTerminal.prototype.keyify = function() {
+		return keyify([this.pressable, this.event])
 	}
 
 	var MoveableTerminal = {
 		MOUSE: 'MOUSE',
 		MOUSE_WHEEL: 'MOUSE_WHEEL'
 	};
-
-	function onKeyDown(e) {
-		console.log(e);
-	}
 
 	function createMouse() {
 		var positon;
@@ -189,64 +194,94 @@ define(['engine/utility/browser'], function(browser){
 		return new Mouse();
 	}
 
-	function Combo(inputs) {
-		inputs = inputs.slice();
+	function Combo() {
+		var args = Array.prototype.slice.call(arguments, 0);
+		var inputs = args.slice();
 		this.terminal = inputs.pop();
 		this.modifiers = inputs;
 	}
 
 	Combo.prototype.keyify = function() {
-		return keyify(this.modifiers.concat(this.terminal));
+		return keyify(this.modifiers.concat(this.terminal.keyify()));
 	}
 
 	var body = document.body;
-	body.addEventListener('keydown', onKeyDown, false);
 
-	var terminalToCombo = {};
+	function listenerToUpdate(e) {
+		var event = e.type === "keydown" ? PressableState.DOWN : PressableState.UP;
+		update(e.keyCode, event);
+		e.stopPropagation();
+	}
+
+	body.addEventListener('keydown', listenerToUpdate);
+	body.addEventListener('keyup', listenerToUpdate);
+
+	var terminalToCombos = {};
 	var comboToCallback = {};
 	var pressableToKeyState = {};
 
-	function prepareForUpdates() {
-
-	}
-
 	function update(pressable, state) {
+		if(!pressableToKeyState[pressable])
+			pressableToKeyState[pressable] = PressableState.UP;
 
-	}
+		if(pressableToKeyState[pressable] === state)
+			return;
 
-	function updateMouseLockedPosition(lockedPosition, movedPosition) {
-
-	}
-
-	function updateMouseScrollWheel(clicks) {
-
+		pressableToKeyState[pressable] = state;
+		var event = state === PressableState.UP ? PressableEvent.RELEASED : PressableEvent.PRESSED;
+		var terminal = new PressableTerminal(pressable, event);
+		signalPressable(terminal);
 	}
 
 	function invokeBoundCallback(combo) {
-
+		comboToCallback[combo.keyify()]();
 	}
 
-	function signalPressable(terminal) {
+	function signalPressable(pressableTerminal) {
+		var combos = terminalToCombos[pressableTerminal.keyify()];
+		if(!combos)
+			return;
 
+		var actionableCombos = combos.filter(function(combo){
+			return areModifiersPressed(combo.modifiers);
+		});
+
+		actionableCombos.forEach(invokeBoundCallback);
 	}
 
-	function signalMoveable(terminal) {
-
-	}
-
-	function isPressablePressed(pressable) {
-
+	function isPressed(pressable) {
+		return pressableToKeyState[pressable] || PressableState.UP;
 	}
 
 	function areModifiersPressed(modifiers) {
-
+		return modifiers.length === 0 || modifiers.every(isPressed);
 	}
+
+	function on(combo, callback) {
+		comboToCallback[combo.keyify()] = callback;
+		var terminalKey = combo.terminal.keyify();
+		if(!terminalToCombos[terminalKey])
+			terminalToCombos[terminalKey] = [];
+		terminalToCombos[terminalKey].push(combo);
+	}
+
+	var terminal1 = new PressableTerminal(Pressable.A, PressableEvent.PRESSED);
+	var combo1 = new Combo(terminal1);
+	on(combo1, function(){
+		console.log('hello');
+	});
+
+	var terminal2 = new PressableTerminal(Pressable.A, PressableEvent.RELEASED);
+	var combo2 = new Combo(terminal2);
+	on(combo2, function(){
+		console.log(', world!');
+	});
 
 	return {
 		Pressable: Pressable,
 		PressableEvent: PressableEvent,
 		PressableTerminal: PressableTerminal,
 		MoveableTerminal: MoveableTerminal,
-		Mouse: createMouse()
+		on: on
 	};
 });
