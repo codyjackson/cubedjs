@@ -1,11 +1,11 @@
 define(['engine/utility/browser'], function(browser){
 	var Pressable = {
 		SPACE: 32,
-		APOSTROPHE: 39,
-		COMMA: 44,
-		MINUS: 45,
-		PERIOD: 46,
-		SLASH: 47,
+		APOSTROPHE: 222,
+		COMMA: 188,
+		MINUS: 189,
+		PERIOD: 190,
+		SLASH: 191,
 		NUM_0: 48,
 		NUM_1: 49,
 		NUM_2: 50,
@@ -16,8 +16,8 @@ define(['engine/utility/browser'], function(browser){
 		NUM_7: 55,
 		NUM_8: 56,
 		NUM_9: 57,
-		SEMICOLON: 59,
-		EQUAL: 61,
+		SEMICOLON: 186,
+		EQUAL: 187,
 		A: 65,
 		B: 66,
 		C: 67,
@@ -69,64 +69,46 @@ define(['engine/utility/browser'], function(browser){
 		NUM_LOCK: 282,
 		PRINT_SCREEN: 283,
 		PAUSE: 284,
-		F1: 290,
-		F2: 291,
-		F3: 292,
-		F4: 293,
-		F5: 294,
-		F6: 295,
-		F7: 296,
-		F8: 297,
-		F9: 298,
-		F10: 299,
-		F11: 300,
-		F12: 301,
-		F13: 302,
-		F14: 303,
-		F15: 304,
-		F16: 305,
-		F17: 306,
-		F18: 307,
-		F19: 308,
-		F20: 309,
-		F21: 310,
-		F22: 311,
-		F23: 312,
-		F24: 313,
-		F25: 314,
-		KP_0: 320,
-		KP_1: 321,
-		KP_2: 322,
-		KP_3: 323,
-		KP_4: 324,
-		KP_5: 325,
-		KP_6: 326,
-		KP_7: 327,
-		KP_8: 328,
-		KP_9: 329,
-		KP_DECIMAL: 330,
-		KP_DIVIDE: 331,
-		KP_MULTIPLY: 332,
-		KP_SUBTRACT: 333,
-		KP_ADD: 334,
-		KP_ENTER: 335,
-		KP_EQUAL: 336,
-		LEFT_SHIFT: 340,
-		LEFT_CONTROL: 341,
-		LEFT_ALT: 342,
-		LEFT_SUPER: 343,
-		RIGHT_SHIFT: 344,
-		RIGHT_CONTROL: 345,
-		RIGHT_ALT: 346,
-		RIGHT_SUPER: 347,
-		MENU: 348,
-		MOUSE_BUTTON_1: 450,
-		MOUSE_BUTTON_2: 451,
-		MOUSE_BUTTON_3: 452,
-		MOUSE_BUTTON_4: 453,
-		MOUSE_BUTTON_5: 454,
-		MOUSE_BUTTON_6: 455,
-		NONE: 456
+		F1: 112,
+		F2: 113,
+		F3: 114,
+		F4: 115,
+		F5: 116,
+		F6: 117,
+		F7: 118,
+		F8: 119,
+		F9: 120,
+		F10: 121,
+		F11: 122,
+		F12: 123,
+		KP_0: 45,
+		KP_1: 35,
+		KP_2: 40,
+		KP_3: 34,
+		KP_4: 37,
+		KP_5: 12,
+		KP_6: 39,
+		KP_7: 36,
+		KP_8: 38,
+		KP_9: 33,
+		KP_DECIMAL: 46,
+		KP_DIVIDE: 111,
+		KP_MULTIPLY: 106,
+		KP_SUBTRACT: 109,
+		KP_ADD: 107,
+		KP_ENTER: 13,
+		SHIFT: 16,
+		CONTROL: 17,
+		ALT: 18,
+		MENU: 93,
+		MOUSE_BUTTON_1: 1,
+		MOUSE_BUTTON_2: 3,
+		//Unfortunately these are reserved for navigating forward and backward 
+		//for web pages and can't be preempted.
+		//MOUSE_BUTTON_3: 452,
+		//MOUSE_BUTTON_4: 453,
+		MOUSE_BUTTON_5: 2,
+		NONE: 4444
 	};
 
 	var PressableEvent = {
@@ -208,13 +190,17 @@ define(['engine/utility/browser'], function(browser){
 	var body = document.body;
 
 	function listenerToUpdate(e) {
-		var event = e.type === "keydown" ? PressableState.DOWN : PressableState.UP;
-		update(e.keyCode, event);
+		var isDownEvent = e.type.indexOf('down') !== -1;
+		var event = isDownEvent ? PressableState.DOWN : PressableState.UP;
+
+		update(e.which, event);
 		e.stopPropagation();
 	}
 
 	body.addEventListener('keydown', listenerToUpdate);
 	body.addEventListener('keyup', listenerToUpdate);
+	body.addEventListener('mousedown', listenerToUpdate);
+	body.addEventListener('mouseup', listenerToUpdate);
 
 	var terminalToCombos = {};
 	var comboToCallback = {};
@@ -271,7 +257,7 @@ define(['engine/utility/browser'], function(browser){
 		console.log('hello');
 	});
 
-	var terminal2 = new PressableTerminal(Pressable.A, PressableEvent.RELEASED);
+	var terminal2 = new PressableTerminal(Pressable.MOUSE_BUTTON_1, PressableEvent.RELEASED);
 	var combo2 = new Combo(terminal2);
 	on(combo2, function(){
 		console.log(', world!');
