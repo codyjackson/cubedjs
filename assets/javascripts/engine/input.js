@@ -119,7 +119,7 @@ define(['engine/utility/browser'], function(browser){
 	var PressableState = {
 		UP: 'UP',
 		DOWN: 'DOWN'
-	}
+	};
 
 	function keyify(items) {
 		return items.join('');
@@ -131,8 +131,8 @@ define(['engine/utility/browser'], function(browser){
 	}
 
 	PressableTerminal.prototype.keyify = function() {
-		return keyify([this.pressable, this.event])
-	}
+		return keyify([this.pressable, this.event]);
+	};
 
 	var MoveableTerminal = {
 		MOUSE: 'MOUSE',
@@ -185,7 +185,7 @@ define(['engine/utility/browser'], function(browser){
 
 	Combo.prototype.keyify = function() {
 		return keyify(this.modifiers.concat(this.terminal.keyify()));
-	}
+	};
 
 	var body = document.body;
 
