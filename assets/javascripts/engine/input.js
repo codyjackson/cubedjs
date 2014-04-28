@@ -251,23 +251,12 @@ define(['engine/utility/browser'], function(browser){
 		terminalToCombos[terminalKey].push(combo);
 	}
 
-	var terminal1 = new PressableTerminal(Pressable.A, PressableEvent.PRESSED);
-	var combo1 = new Combo(terminal1);
-	on(combo1, function(){
-		console.log('hello');
-	});
-
-	var terminal2 = new PressableTerminal(Pressable.MOUSE_BUTTON_1, PressableEvent.RELEASED);
-	var combo2 = new Combo(terminal2);
-	on(combo2, function(){
-		console.log(', world!');
-	});
-
 	return {
 		Pressable: Pressable,
 		PressableEvent: PressableEvent,
 		PressableTerminal: PressableTerminal,
 		MoveableTerminal: MoveableTerminal,
+		Combo: Combo,
 		on: on
 	};
 });
