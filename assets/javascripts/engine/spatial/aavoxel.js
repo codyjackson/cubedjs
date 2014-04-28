@@ -81,8 +81,8 @@ function(AAPlane, Numerical, Geometry, Constants, THREE){
 		var g = new THREE.Geometry();
 		g.vertices = verts;
 		g.faces = [
-			new THREE.Face3(0, 1, 3, null, new THREE.Color(0xFFFF00)),
-			new THREE.Face3(3, 1, 2, null, new THREE.Color(0xFFFF00))
+			new THREE.Face3(0, 1, 3, null, color),
+			new THREE.Face3(3, 1, 2, null, color)
 		];
 
 		return g;
